@@ -4,7 +4,8 @@ from os import getenv
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from user_transactions.models.definitions import document_models_v1
-from user_transactions.auth.v1.authentication import auth_router
+from user_transactions.auth.v1.routes import auth_router
+from user_transactions.transaction.v1.routes import tx_router
 from user_transactions.middlewares.request import RequestDataMiddleware
 from beanie import init_beanie
 
@@ -47,3 +48,6 @@ app.add_middleware(RequestDataMiddleware)
 
 # Routers
 app.include_router(auth_router)
+app.include_router(tx_router)
+    
+
