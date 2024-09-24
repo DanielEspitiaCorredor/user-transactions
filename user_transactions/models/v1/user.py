@@ -4,10 +4,10 @@ from beanie import  Document
 
 
 class UserRequest(BaseModel):
-    username: str = Field(title="Username", description="A valid username value",  min_length=5, max_length=15, example="user1")
-    email: EmailStr = Field(title="Email Address", description="A valid email address", example="user@example.com")
-    name: str = Field(title="Name", description="User full name", example="Jhon Doe")
-    password: str = Field(title="Password", description="Security password",  min_length=5, max_length=30)
+    username: str = Field(title="Username", description="A valid username value",  min_length=5, max_length=15, example="despitia")
+    email: EmailStr = Field(title="Email Address", description="A valid email address", example="despitia@example.com")
+    name: str = Field(title="Name", description="User full name", example="Daniel Espitia")
+    password: str = Field(title="Password", description="Security password",  min_length=5, max_length=30, example="despitia#123")
     
 
 
@@ -20,6 +20,9 @@ class User(Document):
     created_at: datetime = Field(title="Update date", description="Explain itself", default=datetime.now(timezone.utc))
     updated_at: datetime = Field(title="Creation date", description="Explain itself", default=datetime.now(timezone.utc))
     
+    @field_serializer('created_at', 'updated_at')
+    def serialize_date(self, dt: datetime, _info):
+        return dt.isoformat(timespec='milliseconds')
         
     class Settings:
         # The name of the collection to store these objects.

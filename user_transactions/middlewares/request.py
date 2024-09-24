@@ -18,15 +18,16 @@ class RequestDataMiddleware(BaseHTTPMiddleware):
             
             process_time = time.perf_counter() - start_time
             response.headers["X-Process-Time"] = str(process_time)
+            response.headers["X-Request-ID"] = request.state.request_id
             return response
             
         except Exception as e:
             
             response = JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                                content=HttpErrorResponse(request_data=request.state.request_data,
-                                                          error_details=f"Unexpected error processing request {e}",
+                                content=HttpErrorResponse(error_details=f"Unexpected error processing request {e}",
                                                           retryable=False).model_dump())
             
             process_time = time.perf_counter() - start_time
             response.headers["X-Process-Time"] = str(process_time)
-            return 
+            response.headers["X-Request-ID"] = request.state.request_id
+            return response

@@ -12,6 +12,7 @@ pymongo = "^4.9.1"
 motor = {extras = ["srv"], version = "^3.6.0"}
 beanie = "^1.26.0"
 passlib = "^1.7.4"
+pyjwt = "^2.9.0"
 
 
 [build-system]

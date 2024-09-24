@@ -4,11 +4,13 @@ from fastapi import Request, APIRouter,  Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 from user_transactions.models.v1.user import UserRequest, User, UserResponse
-from user_transactions.models.v1.login import LoginRequest
+from user_transactions.models.v1.login import LoginRequest, LoginResponse
 from user_transactions.auth.v1.errors import RegisterConflict
-from user_transactions.auth.v1.security import get_hashed_password
+from user_transactions.auth.v1.security import get_hashed_password, is_correct_password
 from user_transactions.models.http import  HttpErrorResponse
+from user_transactions.auth.jwt.manager import JWTBearerManager, create_token
 from uuid import uuid4
+from datetime import datetime, timezone, timedelta
 
 # verify_access_token
 
@@ -49,14 +51,36 @@ async def register(user: UserRequest, request: Request):
                 error_details="cannot create this user",
                 retryable=False
             ).model_dump())
+
+
+
+@auth_router.post("/login")
+async def login(login: LoginRequest, request: Request):
+    
+    process_msg = f"[{request.state.request_id}][Login]"
+    
+    print(f"{process_msg} Start process")
+    
+    user = await User.find_one(User.username == login.username)
         
-    except Exception as e:
-        
-        print(f"{process_msg}[ERROR] Unexpected exception {e}")
-        return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=HttpErrorResponse(
-                error_details="unexpected exception",
-                retryable=True
+    if not user:
+        print(f"{process_msg}[ERROR] User not found")
+        return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content=HttpErrorResponse(
+                error_details="invalid username or password",
+                retryable=False
             ).model_dump())
-
-
-
+    
+    
+    if is_correct_password(login.password, user.hashed_password):
+        tkn_data = user.model_dump(exclude=['hashed_password'])
+        tkn_data["exp"] = datetime.now(tz=timezone.utc) + timedelta(hours=1)
+        tkn = create_token(tkn_data)
+        
+        return JSONResponse(status_code=status.HTTP_200_OK, content=LoginResponse(token=tkn,
+                                                                                  exp=tkn_data["exp"].isoformat(timespec='milliseconds')).model_dump())
+        
+    
+    return JSONResponse(status_code=status.HTTP_401_UNAUTHORIZED, content=HttpErrorResponse(
+            error_details="invalid username or password",
+            retryable=False
+        ).model_dump())
