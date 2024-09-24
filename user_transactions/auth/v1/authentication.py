@@ -1,14 +1,12 @@
-from typing import Annotated, Union
 
-from fastapi import Request, APIRouter,  Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import Request, APIRouter, status
 from fastapi.responses import JSONResponse
 from user_transactions.models.v1.user import UserRequest, User, UserResponse
 from user_transactions.models.v1.login import LoginRequest, LoginResponse
 from user_transactions.auth.v1.errors import RegisterConflict
 from user_transactions.auth.v1.security import get_hashed_password, is_correct_password
 from user_transactions.models.http import  HttpErrorResponse
-from user_transactions.auth.jwt.manager import JWTBearerManager, create_token
+from user_transactions.auth.jwt.manager import create_token
 from uuid import uuid4
 from datetime import datetime, timezone, timedelta
 
@@ -18,8 +16,6 @@ from datetime import datetime, timezone, timedelta
 auth_router = APIRouter(
     prefix="/v1/auth"
 )
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 @auth_router.post("/register")
