@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "user_transactions"
+version = "0.1.0"
+description = "Project used to manage user transactions and send email with processed data"
+authors = ["Daniel Espitia Corredor <danielespitiacorredor@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = {extras = ["standard"], version = "^0.115.0"}
+pymongo = "^4.9.1"
+motor = {extras = ["srv"], version = "^3.6.0"}
+beanie = "^1.26.0"
+passlib = "^1.7.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
