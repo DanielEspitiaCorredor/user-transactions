@@ -10,7 +10,6 @@ transactions = ["Nike Shoes", "Razer", "Apple", "Amazon", "Netflix", "Spotify", 
 
 records = 100
 account_id = "976133242399"
-year = 2024
 
 # Helper function to generate random dates
 def random_date(start_month, end_month):
@@ -25,15 +24,15 @@ def random_date(start_month, end_month):
 
 if __name__ == "__main__":
     
-    filename = f"account_{account_id}_{year}.csv"
+    filename = f"account_{account_id}.csv"
     file_path = f"{str(os.path.abspath('.'))}/user_transactions/storage"
     print(f"\n\nStart file generation {filename} in path {file_path} with {records} records")
     
     data = {
-        "Id": [i for i in range(records)],
-        "Date": [random_date(7, 8) for _ in range(records)],
-        "Transaction": [choice(transactions) for _ in range(records)],
-        "Value": [round(uniform(-1599, 1599), 2) for _ in range(records)]
+        "id": [i for i in range(records)],
+        "date": [random_date(7, 8) for _ in range(records)],
+        "name": [choice(transactions) for _ in range(records)],
+        "value": [round(uniform(-1599, 1599), 2) for _ in range(records)]
     }
 
     # Creating DataFrame
