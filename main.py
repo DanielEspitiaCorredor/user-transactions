@@ -43,7 +43,8 @@ async def app_lifespan(app: FastAPI):
     app.mongodb_client.close()
 
 app = FastAPI(lifespan=app_lifespan)
-app.title = "Api used to manage user transactions"
+app.title = "User transactions"
+app.description = "Api used to manage user transactions"
 app.add_middleware(RequestDataMiddleware)
 
 # Routers
