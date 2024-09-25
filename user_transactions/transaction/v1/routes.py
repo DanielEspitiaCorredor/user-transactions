@@ -16,14 +16,14 @@ tx_router = APIRouter(
 )
 
 
-@tx_router.post("/extract")
-async def extract(extract_data: ExtractRequest, request: Request):
+@tx_router.post("/generate_report")
+def generate_report(extract_data: ExtractRequest, request: Request):
     
     
-    process_msg = f"[{request.state.request_id}][Extract]"
+    process_msg = f"[{request.state.request_id}][Generate_report]"
     
     print(f"{process_msg} Extract data process")
     
-    await process.extract_and_insert_data(extract_data)
+    process.generate_report(extract_data)
     
-    return JSONResponse(status_code=status.HTTP_200_OK, content={})
+    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)

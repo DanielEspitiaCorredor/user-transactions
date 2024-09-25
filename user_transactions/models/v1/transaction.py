@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 class ExtractRequest(BaseModel):
     account: str = Field(title="Account", description="User account", example="976133242399")
     year: int = Field(title="Year", description="A valid year to extract data", example=2024)
+    receiver_email: str = Field(title="Receiver Email", description="Email to receive account report", example="danielespitiacorredor@gmail.com")
 
 
 

@@ -5,11 +5,7 @@ from user_transactions.transaction.v1.balance import AccountBalance
 from functools import reduce
 import pandas as pd
 
-def extract_and_insert_data(extract_data: ExtractRequest):
-    # Total balance in the account, - OK
-    # Number of transactions grouped by month - OK
-    # Average credit by month - OK
-    # average debit amounts by month - OK
+def generate_report(extract_data: ExtractRequest):
     
     df = pd.read_csv(f"./user_transactions/storage/account_{extract_data.account}.csv")
     
@@ -56,4 +52,4 @@ def extract_and_insert_data(extract_data: ExtractRequest):
                              total_credit_per_name=total_credit_per_name,
     )
     
-    summary.send_report()
+    summary.send_report(extract_data.receiver_email)
