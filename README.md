@@ -28,6 +28,12 @@ To send emails, the AccountBalance class is utilized, which integrates the relev
 
 # Get Started
 
+
+For configure this project, please set the env file in the project path
+
+![alt text](/user_transactions/storage/readme/setenv.png)
+
+
 This project use a docker-compose file to launch two containers. The first is the fastapi application and the other is a mongo database.
 
 ```
