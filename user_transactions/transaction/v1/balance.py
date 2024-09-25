@@ -93,7 +93,7 @@ class AccountBalance:
         html_content = html_content.replace("[top_debit_transactions]", top_debit)
         html_content = html_content.replace("[top_credit_transactions]", top_credit)
 
-        sender_email = "reports@despitia.co"
+        sender_email = "reports@daniespitia.co"
         message = MIMEMultipart("alternative")
         message["Subject"] = "Your account report is now avalaible"
         message["From"] = sender_email
