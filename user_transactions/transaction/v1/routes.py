@@ -1,5 +1,5 @@
 from fastapi import Request, APIRouter, Depends, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import Response
 
 
 from user_transactions.models.v1.transaction import ExtractRequest
@@ -17,13 +17,13 @@ tx_router = APIRouter(
 
 
 @tx_router.post("/generate_report")
-def generate_report(extract_data: ExtractRequest, request: Request):
+async def generate_report(extract_data: ExtractRequest, request: Request):
     
     
     process_msg = f"[{request.state.request_id}][Generate_report]"
     
     print(f"{process_msg} Extract data process")
     
-    process.generate_report(extract_data)
+    await process.generate_report(extract_data)
     
-    return JSONResponse(status_code=status.HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
