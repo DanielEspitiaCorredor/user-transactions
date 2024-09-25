@@ -5,7 +5,7 @@ from user_transactions.transaction.v1.balance import AccountBalance
 from functools import reduce
 import pandas as pd
 
-def generate_report(extract_data: ExtractRequest):
+async def generate_report(extract_data: ExtractRequest):
     
     df = pd.read_csv(f"./user_transactions/storage/account_{extract_data.account}.csv")
     
@@ -14,7 +14,7 @@ def generate_report(extract_data: ExtractRequest):
     df["date"] = pd.to_datetime(df['date'],format='ISO8601')
     
     
-    # insert_transactions(iter(df.to_dict(orient="records")), len(df))
+    await insert_transactions(iter(df.to_dict(orient="records")), len(df))
     
     df = df[df.date.dt.year == extract_data.year]
     
