@@ -25,7 +25,7 @@ ENV PYTHONUNBUFFERED=1 \
     # Project variables
     FLASK_ENV=development \
     DJANGO_DEBUG=False \
-    PROJECT_NAME=Vozy-API
+    PROJECT_NAME=USER-TRANSACTIONS
 
 USER root
 RUN apt-get update; \
@@ -43,5 +43,6 @@ ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 COPY . /opt/app
 WORKDIR /opt/app
 RUN poetry install --no-dev  && rm -rf ~/.cache/pypoetry/{cache,artifacts}
-ENTRYPOINT ["flask", "run", "--host=0.0.0.0"]
+  
+ENTRYPOINT ["uvicorn", "main:app", "--host=0.0.0.0", "--reload"]
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
