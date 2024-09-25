@@ -1,6 +1,7 @@
 
-from user_transactions.models.v1.transaction import ExtractRequest, AccountBalance
+from user_transactions.models.v1.transaction import ExtractRequest
 from user_transactions.transaction.v1.db import insert_transactions
+from user_transactions.transaction.v1.balance import AccountBalance
 from functools import reduce
 import pandas as pd
 
@@ -23,15 +24,12 @@ def extract_and_insert_data(extract_data: ExtractRequest):
     
     
     # Get number of transactions grouped by month
-    transactions = df.groupby(df.date.dt.month).agg(TransactionsCount=('value', 'count')).reset_index().rename({"date": "month"}, axis=1)
+    transactions = df.groupby(df.date.dt.month).agg(transactions_count=('value', 'count')).reset_index().rename({"date": "month"}, axis=1)
     
     
     # Get credit data by month
     df_credit = df[df["value"] > 0]
-    average_credit_by_month = (df_credit.groupby(df.date.dt.month)
-                               .agg(avg_credit=('value', 'mean'))
-                               .reset_index()
-                               .rename({"date": "month"}, axis=1))
+    average_credit = df_credit.agg(avg_credit=('value', 'mean'))
     total_credit_per_name = (df_credit.groupby(df.name)
                              .agg(total=("value", "sum"))
                              .sort_values(by=["total"], ascending=False)
@@ -41,10 +39,7 @@ def extract_and_insert_data(extract_data: ExtractRequest):
     # Get debit data by month
     df_debit = df[df["value"] < 0]
     df_debit.loc[:, "value"] = df_debit["value"].apply(lambda v: abs(v))
-    average_debit_by_month = (df_debit.groupby(df.date.dt.month)
-                              .agg(avg_debit=('value', 'mean'))
-                              .reset_index()
-                              .rename({"date": "month"}, axis=1))
+    average_debit = df_debit.agg(avg_debit=('value', 'mean'))
 
     total_debit_per_name = (df_debit.groupby(df.name)
                             .agg(total=("value", "sum"))
@@ -53,10 +48,12 @@ def extract_and_insert_data(extract_data: ExtractRequest):
                             .rename({"date": "month"}, axis=1))
     
     
-    # summary = AccountBalance(total_balance=float(df["value"].sum().round(2)),
-    #     balance_per_month=reduce(lambda left, right: pd.merge(left,right,on='month'), [transactions, average_credit_by_month, average_debit_by_month]),
-    #     total_debit_per_name=total_debit_per_name,
-    #     total_credit_per_name=total_credit_per_name,
-    # )
+    summary = AccountBalance(account=extract_data.account,
+                             total_balance=float(df["value"].sum().round(2)),
+                             avg_transactions=pd.concat([average_credit, average_debit]),
+                             balance_per_month=transactions,
+                             total_debit_per_name=total_debit_per_name,
+                             total_credit_per_name=total_credit_per_name,
+    )
     
-    # summary.send_report()
+    summary.send_report()
