@@ -66,3 +66,7 @@ Finally, when authentication is ok, you can execute the endpoint to generate rep
 When you use this endpoint, you receive an email with the balance of your account
 
 ![alt text](/user_transactions/storage/readme/report.png)
+
+# Generate data
+
+To generate a new file with test data execute `make generate-csv`
