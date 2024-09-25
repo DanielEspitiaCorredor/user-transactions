@@ -93,7 +93,7 @@ class AccountBalance:
         html_content = html_content.replace("[top_debit_transactions]", top_debit)
         html_content = html_content.replace("[top_credit_transactions]", top_credit)
 
-        sender_email = "reports@daniespitia.co"
+        sender_email = "despitiaco99@gmail.com"
         message = MIMEMultipart("alternative")
         message["Subject"] = "Your account report is now avalaible"
         message["From"] = sender_email
@@ -108,7 +108,8 @@ class AccountBalance:
         
         with smtplib.SMTP(SMTP_HOST, 587) as server:
             server.starttls()
-            server.login("api", SMTP_PASSWD)
+            server.ehlo()
+            server.login(sender_email, SMTP_PASSWD)
             server.sendmail(sender_email, receiver_email, message.as_string())
             
 
