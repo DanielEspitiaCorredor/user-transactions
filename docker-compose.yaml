@@ -1,4 +1,3 @@
-version: "3.4"
 networks:
   txnetwork:
       name: txnetwork.localhost
@@ -6,7 +5,7 @@ services:
   transactions-api:
     build: .
     image: user-transactions:latest
-    container_name: user-transactions
+    container_name: user-tx
     env_file:
       - .env
     networks:

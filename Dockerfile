@@ -1,4 +1,4 @@
-FROM python:3.10.15-alpine3.20
+FROM python:3.10.12-slim
 
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
@@ -24,13 +24,12 @@ ENV PYTHONUNBUFFERED=1 \
     DEV_DEPENDENCIES="bash vim curl" \
     # Project variables
     FLASK_ENV=development \
-    DJANGO_DEBUG=False \
     PROJECT_NAME=USER-TRANSACTIONS
 
 USER root
 RUN apt-get update; \
     apt-get install -y --no-install-recommends $DEV_DEPENDENCIES; \
-    curl -o /tmp/get-poetry.py https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py; \
+    curl -o /tmp/get-poetry.py https://install.python-poetry.org; \
     python /tmp/get-poetry.py; \
     rm /tmp/get-poetry.py; \
     mkdir -p "$APP_PATH"; \
