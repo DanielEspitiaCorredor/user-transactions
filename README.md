@@ -69,4 +69,4 @@ When you use this endpoint, you receive an email with the balance of your accoun
 
 # Generate data
 
-To generate a new file with test data execute `make generate-csv`
+To generate a new file with test data execute `make generate-csv`. This command creates a new file that you can use in this project
