@@ -16,7 +16,6 @@ auth_router = APIRouter(
     prefix="/v1/auth"
 )
 
-
 @auth_router.post("/register")
 async def register(user: UserRequest, request: Request):
     
