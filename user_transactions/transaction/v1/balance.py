@@ -1,11 +1,16 @@
 import pandas as pd
-import requests
 import os, calendar
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
 
-# Mailgun API credentials
-MAILGUN_API_KEY = 'f443aac3dfde4ec431744d05b5c192cb-1b5736a5-f9472731'  # Replace with your Mailgun API key
-MAILGUN_DOMAIN = 'sandbox0326581edc2f47e5ba77041321d3e142.mailgun.org'    # Replace with your Mailgun domain (e.g., sandboxXXXX.mailgun.org)
+
+# Environment vars
+
+SMTP_HOST = os.getenv("SMTP_HOST")
+SMTP_PASSWD = os.getenv("SMTP_PASSWD")
 
 class AccountBalance:
     account: str
@@ -31,16 +36,14 @@ class AccountBalance:
             self.total_credit_per_name = self.total_credit_per_name[0]
         
         
-    def send_report(self):
+    def send_report(self, receiver_email):
         
 
         # Define the email details
-        from_email = 'User Transactions <mailgun@sandbox0326581edc2f47e5ba77041321d3e142.mailgun.org>'
-        to_email = 'YOU@sandbox0326581edc2f47e5ba77041321d3e142.mailgun.org'
-        subject = 'Account Summary'
         
+        basePath = str(os.path.abspath('.'))
         # Load the HTML content from a file
-        with open(f"{str(os.path.abspath('.'))}/user_transactions/storage/email/template.html", 'r') as file:
+        with open(f"{basePath}/user_transactions/storage/email/template.html", 'r') as file:
             html_content = file.read()
 
         html_content = html_content.replace("[account_number]", self.account)
@@ -51,7 +54,7 @@ class AccountBalance:
         month_transactions = ""
         for _, v in  self.balance_per_month.iterrows():
             
-            template_month_transaction = '<p><span class="label">Transactions in {month}:</span> {value}</p>\n'.format(
+            template_month_transaction = '<p><span class="label">Transactions in {month}:</span> {value}</p><br>'.format(
                 month=calendar.month_name[int(v.month)],
                 value=v.transactions_count,
             )
@@ -89,7 +92,24 @@ class AccountBalance:
         
         html_content = html_content.replace("[top_debit_transactions]", top_debit)
         html_content = html_content.replace("[top_credit_transactions]", top_credit)
-            
+
+        sender_email = "reports@demomailtrap.com"
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "Your account report is now avalaible"
+        message["From"] = sender_email
+        message["To"] = receiver_email
+
+        message.attach(MIMEText(html_content, "html"))
+        
+        
+        image = MIMEImage(open(f"{basePath}/user_transactions/storage/email/logo.png", "rb").read())
+        image.add_header('Content-ID', 'company_image')
+        message.attach(image)
+        
+        with smtplib.SMTP(SMTP_HOST, 587) as server:
+            server.starttls()
+            server.login("api", SMTP_PASSWD)
+            server.sendmail(sender_email, receiver_email, message.as_string())
             
 
 
